@@ -1,0 +1,50 @@
+%% -----------------------------------------------------------------------------
+% 03 - zoomprf main - draw ROI
+% ------------------------------------------------------------------------------
+%
+%
+% ------------------------------------------------------------------------------
+% 15/06/2022: Generated (SS)
+% 16/05/2025: Last modified (SS)
+% ------------------------------------------------------------------------------
+
+%% -----------------------------------------------------------------------------
+% (1) Instructions
+% ------------------------------------------------------------------------------
+
+% The instructions are for subject 01, but apply to all other subjects. 
+
+%% .............................................................................Go to data folder
+
+% Navigate to the relevant data folder
+% [...]/data/derivatives/SamSrf/sub-01/ses-01/FWHM-1
+
+%% .............................................................................Call delineation tool and select file
+
+% Run DelineationTool.m in Matlab and
+% select rh_sub-01_ses-01_task-pRF_run-all_FWHM-1_BBR_mgh2srf_mean.mat
+
+%% .............................................................................Select activation map
+
+% Click on Load Activation and
+% select rh_sub-01_ses-01_task-pRF_run-all_FWHM-1_BBR_mgh2srf_spmcan_glm_conts.mat
+
+%% .............................................................................Adjust thresholds
+
+% Set R2 > to -Inf 
+% Set Eccentricity to 0 Inf 
+
+%% .............................................................................Draw manual ROI 
+
+% Select Rotate 3D Tool and rotate sphere with Stim-Rest map until you see the 
+% cluster of interest. 
+% 
+% Select Zoom In Tool and zoom into the cluster of interest. 
+% 
+% Select Data Tips Tool and demark the cluster of interest by placing landmarks 
+% and connecting them via Create New Path. 
+% 
+% Select Save Delineations to save the demarcation.
+% 
+% Select Data Tips Tool and click into cluster. Next, select (Un)Label ROI and 
+% label the cluster D2a. Subsequently, select Save Delineations again. 

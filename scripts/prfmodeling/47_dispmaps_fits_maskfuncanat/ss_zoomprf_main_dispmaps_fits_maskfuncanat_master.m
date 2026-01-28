@@ -1,12 +1,11 @@
 %% -----------------------------------------------------------------------------
-% 14 - zoomprf main - display cross-validated R2 for on-off model with masked 
-%      anatomy
+% 47 - zoomprf main - display maps for fits with masked funnction and anatomy 
 % ------------------------------------------------------------------------------
 %
 %
 % ------------------------------------------------------------------------------
-% 26/09/2022: Generated (SS)
-% 18/01/2026: Last modified (SS)
+% 21/11/2025: Generated (SS)
+% 23/11/2025: Last modified (SS)
 % ------------------------------------------------------------------------------
 
 %% .............................................................................Tidy up
@@ -16,16 +15,15 @@ close all
 
 %% .............................................................................Subjects
 
-
 Subjects.ID            = { ...
     'sub-01' ...
     'sub-02' ...
     'sub-03'};
 
-Subjects.Sessions      = {'ses-02+03+04-eve' 'ses-02+03+04-odd'};
+Subjects.Sessions      = {'ses-02+03+04-eve' 'ses-02+03+04-odd' 'ses-02+03+04'};
 Subjects.Kernel        = {'FWHM-0' 'FWHM-1'};
 
-Subjects.SessionsSamSrfLabel      = {'ses-01' 'ses-01'};
+Subjects.SessionsSamSrfLabel      = {'ses-01' 'ses-01' 'ses-01'};
 %%% Note: Needs to be length of Subjects.Sessions
 Subjects.KernelSamSrfLabel        = {'FWHM-1' 'FWHM-1'};
 %%% Note: Needs to be length of Subjects.Kernel
@@ -71,24 +69,24 @@ Para.HemisSamsrfLabels   = {'rh'};
 
 Para.Transparency        = 0;
 %%% 0 = turn off transparency
-Para.MapType             = {'cR^2'};
+Para.MapType             = {'x0'};
 Para.PathColors          = {[1 1 1]};
 Para.Mesh                = 'inflated';
 Para.EccenRange          = [0 Inf];
 Para.NR2ThreshGen        = 0;
 %%% Note that "Gen" refers to general.
-Para.CR2Thresh           = [0 0.8];
+Para.X0                    = [0 8.500];
 
 Para.Threshold           = {...
-    [Para.NR2ThreshGen Para.CR2Thresh Para.EccenRange Para.Transparency]};
+    [Para.NR2ThreshGen Para.X0    Para.EccenRange Para.Transparency]};
 
-Para.Res                   = 300;
-Para.CamView               = {[94 15 1.4] [-94 15 1.4]};
-Para.Ext                   = 'png';
+Para.Res                 = 300;
+Para.CamView             = {[94 15 1.4] [-94 15 1.4]};
+Para.Ext                 = 'png';
 
-Para.RestrictMapsToLabels      = false;
+Para.RestrictMapsToLabels = true;
 
-Para.BlurryBorderSteps     = 1:7;
+Para.BlurryBorderSteps   = 1; % 1:7;
 
 Para.InactivatenR2Cleaning = true;
 
@@ -97,9 +95,9 @@ Para.PathWidth           = [1 1];
 
 %% .............................................................................Files
 
-Files.Data               = '*mgh2srf_mean_onoff_aperture-pins_vec_spmcan_CrsFit.mat';
+Files.Data               = '*mgh2srf_mean_2dg-fix_aperture-pins_vec_spmcan_CrsFit.mat';
 Files.FSLabel            = [];
-Files.SamSrfLabel        = {'D2a'};
+Files.SamSrfLabel        = {'vertex-1' 'vertex-2'};
 Files.FSAtlas            = [];
 
 Files.AnatLabel          = {'D2a' 'samsrf'};
@@ -114,7 +112,7 @@ Switches.SaveAllVars = 0;
 try
 
     %% -------------------------------------------------------------------------
-    % (1) Display cross-validated R2 map for onoff model with masked anatomy
+    % (1) Display maps for fits with masked funnction and anatomy 
     % --------------------------------------------------------------------------
 
     ss_zoomprf_main_dispmaps_wrapper(Subjects, Fld, Files, Para)

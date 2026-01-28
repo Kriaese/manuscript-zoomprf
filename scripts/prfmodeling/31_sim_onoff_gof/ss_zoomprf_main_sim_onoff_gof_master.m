@@ -1,12 +1,11 @@
 %% -----------------------------------------------------------------------------
-% 14 - zoomprf main - display cross-validated R2 for on-off model with masked 
-%      anatomy
+% 31 - zoomprf main - simulate - onoff model - goodness-of-fit
 % ------------------------------------------------------------------------------
 %
 %
 % ------------------------------------------------------------------------------
-% 26/09/2022: Generated (SS)
-% 18/01/2026: Last modified (SS)
+% 13/03/2023: Generated (SS)
+% 23/11/2025: Last modified (SS)
 % ------------------------------------------------------------------------------
 
 %% .............................................................................Tidy up
@@ -14,21 +13,15 @@
 clear all
 close all
 
+%% .............................................................................Seeding
+
+Rng = rng(14032023, 'twister');
+
 %% .............................................................................Subjects
 
-
-Subjects.ID            = { ...
-    'sub-01' ...
-    'sub-02' ...
-    'sub-03'};
-
-Subjects.Sessions      = {'ses-02+03+04-eve' 'ses-02+03+04-odd'};
-Subjects.Kernel        = {'FWHM-0' 'FWHM-1'};
-
-Subjects.SessionsSamSrfLabel      = {'ses-01' 'ses-01'};
-%%% Note: Needs to be length of Subjects.Sessions
-Subjects.KernelSamSrfLabel        = {'FWHM-1' 'FWHM-1'};
-%%% Note: Needs to be length of Subjects.Kernel
+Subjects.ID        = 'sub-01';
+%%% Note: Subject ID is used for aperture.
+Subjects.Sessions  = {'ses-odd' 'ses-eve'};
 
 %% .............................................................................Folders
 
@@ -38,20 +31,15 @@ Paths = load(fullfile('..', '..', '..', 'paths', 'RootPaths'));
 % Roots
 Fld.TlbxRoot       = Paths.TlbxRoot;
 Fld.DataRoot       = Paths.DataRoot;
-
 Fld.SamSrfRoot     = fullfile(Fld.DataRoot, 'derivatives', 'SamSrf');
-Fld.ResultsRoot    = fullfile(Fld.DataRoot, 'derivatives', 'results');
-Fld.FSRoot         = fullfile(Fld.DataRoot, 'derivatives', 'FreeSurfer');
 
 % Toolboxes
-Fld.Toolboxes      = {'ss_toolbox' 'samsrf_v9.51'};
-
-% FreeSurfer
-Fld.FSLabel        = 'label';
-Fld.FSAtlas        = 'atlas';
+Fld.Toolboxes      = {'ss_toolbox' 'samsrf_v9.51' 'spm12'};
 
 % SamSrf
-Fld.SamSrfLabel    = 'ROIs*';
+Fld.SamSrfApt      = 'aperture';
+Fld.SamSrfSim      = 'simulations';
+Fld.SamSrfSimSub   = 'gof';
 
 %% .............................................................................Add toolboxes
 
@@ -66,46 +54,32 @@ end
 
 %% .............................................................................Parameters
 
-Para.Hemis               = {'rh'};
-Para.HemisSamsrfLabels   = {'rh'};
-
-Para.Transparency        = 0;
-%%% 0 = turn off transparency
-Para.MapType             = {'cR^2'};
-Para.PathColors          = {[1 1 1]};
-Para.Mesh                = 'inflated';
-Para.EccenRange          = [0 Inf];
-Para.NR2ThreshGen        = 0;
-%%% Note that "Gen" refers to general.
-Para.CR2Thresh           = [0 0.8];
-
-Para.Threshold           = {...
-    [Para.NR2ThreshGen Para.CR2Thresh Para.EccenRange Para.Transparency]};
-
-Para.Res                   = 300;
-Para.CamView               = {[94 15 1.4] [-94 15 1.4]};
-Para.Ext                   = 'png';
-
-Para.RestrictMapsToLabels      = false;
-
-Para.BlurryBorderSteps     = 1:7;
-
-Para.InactivatenR2Cleaning = true;
-
-Para.Blanco              = false;
-Para.PathWidth           = [1 1];
+Para.TR            = 2;
+Para.HrfType       = 'spmcan';
+%%% Note:
+%%% 'samsrfcan' = SamSrf's canonical HRF
+%%% 'spmcan'    = Spm's canonical HRF
+Para.Sd            = [2];
+%%% Note: Para.Sd is standard deviation of the noise.
+%%% Para.Sd = 0 means that no noise will be added.
+Para.NReps         = [100000];
+%%% Note: Needs to have the same size as Para.Sd
+Para.ModelType     = 'onoff';
+[X, Y]             = ndgrid(0, 0);
+%%%: Note: This needs to be specified in aperture space.
+Para.GroundTruth   = {[X(:) Y(:)]'};
+%%% Note: Needs to have the same size as Para.Sd.
 
 %% .............................................................................Files
 
-Files.Data               = '*mgh2srf_mean_onoff_aperture-pins_vec_spmcan_CrsFit.mat';
-Files.FSLabel            = [];
-Files.SamSrfLabel        = {'D2a'};
-Files.FSAtlas            = [];
-
-Files.AnatLabel          = {'D2a' 'samsrf'};
-%%% Note: 'fsatlas': refers to the derived FreeSurfer atlas+corresponding labels; 
-%%% 'samsrf' refers to manual labels defined using SamSrf; and  
-%%% 'fslabels' refers to the standard free surfer labels. 
+Files.Apt                    = 'task-prf_aperture-pins_vec.mat';
+Files.Affix                  = 'task-prf_';
+Files.SearchGridCoverge      = {'sgrid-none'};
+%%% Note:
+%%% 'mix' = Some ground truth values are matching the search grid values.
+%%% 'mismatch' = No ground truth values are matching the search grid values.
+%%% 'match' = All ground truth values are matching the search grid values.
+%%% 'none' = Does not apply (e.g., in case of onoff model).
 
 %% .............................................................................Switches
 
@@ -114,10 +88,10 @@ Switches.SaveAllVars = 0;
 try
 
     %% -------------------------------------------------------------------------
-    % (1) Display cross-validated R2 map for onoff model with masked anatomy
+    % (1) Simulate - onoff model - goodness-of-fit
     % --------------------------------------------------------------------------
 
-    ss_zoomprf_main_dispmaps_wrapper(Subjects, Fld, Files, Para)
+    ss_zoomprf_main_sim_wrapper(Subjects, Fld, Files, Para)
 
     %% -------------------------------------------------------------------------
     % (2) Save all variables

@@ -4,8 +4,10 @@ function ss_zoomprf_main_dispmaps_wrapper(Subjects, Fld, Files, Para)
 %
 % ------------------------------------------------------------------------------
 % 18/09/2022: Regenerated (SS)
-% 06/01/2025: Last modified (SS)
+% 18/01/2026: Last modified (SS)
 % ------------------------------------------------------------------------------
+%%% TODO: Naming of "File." and "Files." is a bit unfortunate, as "Files."
+%%% contains file names and "File." the input data.
 
 %% .............................................................................Get t0
 

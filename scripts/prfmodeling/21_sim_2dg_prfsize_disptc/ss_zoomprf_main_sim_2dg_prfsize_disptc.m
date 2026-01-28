@@ -1,12 +1,11 @@
 %% -----------------------------------------------------------------------------
-% 14 - zoomprf main - display cross-validated R2 for on-off model with masked 
-%      anatomy
+% 21 - zoomprf main - simulate - 2dg model - prf size - display time course
 % ------------------------------------------------------------------------------
 %
 %
 % ------------------------------------------------------------------------------
-% 26/09/2022: Generated (SS)
-% 18/01/2026: Last modified (SS)
+% 07/09/2023: Generated (SS)
+% 12/01/2026: Last modified (SS)
 % ------------------------------------------------------------------------------
 
 %% .............................................................................Tidy up
@@ -16,19 +15,7 @@ close all
 
 %% .............................................................................Subjects
 
-
-Subjects.ID            = { ...
-    'sub-01' ...
-    'sub-02' ...
-    'sub-03'};
-
-Subjects.Sessions      = {'ses-02+03+04-eve' 'ses-02+03+04-odd'};
-Subjects.Kernel        = {'FWHM-0' 'FWHM-1'};
-
-Subjects.SessionsSamSrfLabel      = {'ses-01' 'ses-01'};
-%%% Note: Needs to be length of Subjects.Sessions
-Subjects.KernelSamSrfLabel        = {'FWHM-1' 'FWHM-1'};
-%%% Note: Needs to be length of Subjects.Kernel
+Subjects.Sessions  = {'ses-all'};
 
 %% .............................................................................Folders
 
@@ -41,17 +28,13 @@ Fld.DataRoot       = Paths.DataRoot;
 
 Fld.SamSrfRoot     = fullfile(Fld.DataRoot, 'derivatives', 'SamSrf');
 Fld.ResultsRoot    = fullfile(Fld.DataRoot, 'derivatives', 'results');
-Fld.FSRoot         = fullfile(Fld.DataRoot, 'derivatives', 'FreeSurfer');
 
 % Toolboxes
-Fld.Toolboxes      = {'ss_toolbox' 'samsrf_v9.51'};
-
-% FreeSurfer
-Fld.FSLabel        = 'label';
-Fld.FSAtlas        = 'atlas';
+Fld.Toolboxes      = {'ss_toolbox' 'samsrf_v9.51' 'scientificcolourmaps8'};
 
 % SamSrf
-Fld.SamSrfLabel    = 'ROIs*';
+Fld.SamSrfSim      = 'simulations';
+Fld.SamSrfSimSub   = 'prfsize';
 
 %% .............................................................................Add toolboxes
 
@@ -66,46 +49,25 @@ end
 
 %% .............................................................................Parameters
 
-Para.Hemis               = {'rh'};
-Para.HemisSamsrfLabels   = {'rh'};
+Para.Hemis         = {'sim'};
+Para.Sd            = [0];
+Para.NReps         = [1];
+Para.Ext           = 'pdf';
+Para.Res           = 300;
+Para.VtxIdx        = [1:6];
 
-Para.Transparency        = 0;
-%%% 0 = turn off transparency
-Para.MapType             = {'cR^2'};
-Para.PathColors          = {[1 1 1]};
-Para.Mesh                = 'inflated';
-Para.EccenRange          = [0 Inf];
-Para.NR2ThreshGen        = 0;
-%%% Note that "Gen" refers to general.
-Para.CR2Thresh           = [0 0.8];
+Para.YLim          = [-1.5 2.5];
+Para.YTicks        = [-1.5:0.5:3];
+Para.SophFeatures  = true; 
 
-Para.Threshold           = {...
-    [Para.NR2ThreshGen Para.CR2Thresh Para.EccenRange Para.Transparency]};
+Para.Units         = 'mm'; 
 
-Para.Res                   = 300;
-Para.CamView               = {[94 15 1.4] [-94 15 1.4]};
-Para.Ext                   = 'png';
-
-Para.RestrictMapsToLabels      = false;
-
-Para.BlurryBorderSteps     = 1:7;
-
-Para.InactivatenR2Cleaning = true;
-
-Para.Blanco              = false;
-Para.PathWidth           = [1 1];
+Para.BlockOnsets   = 1:16:144; 
 
 %% .............................................................................Files
 
-Files.Data               = '*mgh2srf_mean_onoff_aperture-pins_vec_spmcan_CrsFit.mat';
-Files.FSLabel            = [];
-Files.SamSrfLabel        = {'D2a'};
-Files.FSAtlas            = [];
-
-Files.AnatLabel          = {'D2a' 'samsrf'};
-%%% Note: 'fsatlas': refers to the derived FreeSurfer atlas+corresponding labels; 
-%%% 'samsrf' refers to manual labels defined using SamSrf; and  
-%%% 'fslabels' refers to the standard free surfer labels. 
+Files.SearchGridCoverge  = {'sgrid-mix' 'sgrid-mix'};
+Files.Prf                = {'task-prf_nrep-' '_sd-' '2dg_aperture-pins_vec_spmcan'};
 
 %% .............................................................................Switches
 
@@ -114,10 +76,10 @@ Switches.SaveAllVars = 0;
 try
 
     %% -------------------------------------------------------------------------
-    % (1) Display cross-validated R2 map for onoff model with masked anatomy
+    % (1) Simulate - 2dg model - prf size - display time course
     % --------------------------------------------------------------------------
 
-    ss_zoomprf_main_dispmaps_wrapper(Subjects, Fld, Files, Para)
+    ss_zoomprf_main_sim_disptc_wrapper(Subjects, Fld, Files, Para)
 
     %% -------------------------------------------------------------------------
     % (2) Save all variables

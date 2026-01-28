@@ -33,7 +33,7 @@ function ss_zoomprf_main_sim_dispcount(Srf, Stats, SearchSpace, AptXY, XLabel, Y
 % -/-
 % ------------------------------------------------------------------------------
 % 10/11/2023: Generated (SS)
-% 31/01/2025: Last modified (SS)
+% 20/01/2026: Last modified (SS)
 % ------------------------------------------------------------------------------
 % Note: Function assumes that it deals with x0 and y0 values, that fitting
 % has been performed with adding noise to the simulated data.
@@ -122,7 +122,7 @@ for i_valcols=1:size(Stats.ValuesDim3,2)
 
     %% .........................................................................Add ground truth
 
-    scatter(CurrUniqueGroundTruth(1,1), CurrUniqueGroundTruth(2,1), 12, [1 0 0], 'x');
+    scatter(CurrUniqueGroundTruth(1,1), CurrUniqueGroundTruth(2,1), 12, [220 20 60]./255, 'x');
 
     %% .........................................................................Add plot features
 

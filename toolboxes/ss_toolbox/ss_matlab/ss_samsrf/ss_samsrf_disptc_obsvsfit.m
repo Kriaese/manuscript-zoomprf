@@ -1,4 +1,4 @@
-function ss_samsrf_disptc_obsvsfit(M0, M1, VtxIdx, M0Label, M1Label, M0ValuesTitle, M1ValuesTitle, Units, SophFeatures)
+function ss_samsrf_disptc_obsvsfit(M0, M1, VtxIdx, M0Label, M1Label, M0ValuesTitle, M1ValuesTitle, Units, SophFeatures, BlockOnsets)
 %
 % Plots best fitting time courses of a null model (M0) and an alternative
 % model (M1) along wth the underlying observed time course for a given vertex.
@@ -22,13 +22,15 @@ function ss_samsrf_disptc_obsvsfit(M0, M1, VtxIdx, M0Label, M1Label, M0ValuesTit
 %                 legend should be added (true) or not (false) [logical]
 %                 --> Note that for an array of plots, it might be desirable to
 %                 drop individual legends and a global legend.
+% BlockOnsets   - Contains the onsets of rest or stimualtion blocks in the pRF 
+%                 experiment [double]
 % ------------------------------------------------------------------------------
 % Outputs
 % ------------------------------------------------------------------------------
 % -/-
 % ------------------------------------------------------------------------------
 % 17/08/2023: Generated (SS)
-% 04/02/2025: Last modified (SS)
+% 28/01/2026: Last modified (SS)
 
 %% .............................................................................Some defaults
 
@@ -97,10 +99,6 @@ if ~isequal(M0.Model.TR, M1.Model.TR)
     error('TRs are unequal.')
 end
 
-%% .............................................................................Get TR
-
-TR = M0.Model.TR;
-
 %% .............................................................................Check if downsampling is equal
 
 if ~isequal(M0.Model.Downsample_Predictions, M1.Model.Downsample_Predictions)
@@ -109,7 +107,7 @@ end
 
 %% .............................................................................Plot observed time course
 
-plot((1:length(Y0))*TR*M0.Model.Downsample_Predictions, Y0, 'color', ...
+plot((1:length(Y0))*M0.Model.Downsample_Predictions, Y0, 'color', ...
     [0.5 0.5 0.5 0.5], 'linewidth', 2, 'Marker', '.', ...
     'MarkerFaceColor',[0, 0, 0], 'MarkerEdgeColor',  [0 0 0]);
 hold on
@@ -119,23 +117,34 @@ hold on
 for i_x=1:size(X,2)
     CurrX = X(:,i_x);
     CurrCol = Colors(i_x,:);
-    plot((1:M0.Model.Downsample_Predictions:length(CurrX))*TR, CurrX, 'linewidth',...
+    plot(1:M0.Model.Downsample_Predictions:length(CurrX), CurrX, 'linewidth',...
         2, 'color', [CurrCol 1]);
 end
 
 %% .............................................................................Add axis limits, grid, and axis labels
 
-xlim([1 length(Y0)]*TR);
-grid on
+xlim([1 length(Y0)]);
+% grid on
 
 if  SophFeatures
-    xlabel('time (s)');
+    xlabel('volumes');
     ylabel('response (z)');
 end
 
-%% .............................................................................Add 0 line and legend
+%% .............................................................................Add 0 line 
 
 line(xlim, [0 0], 'color', [0 0 0], 'linewidth', 1, 'linestyle', ':');
+
+%% .............................................................................Add block onsets 
+
+xline(BlockOnsets, 'color', [0 0 0], 'lineWidth', 1, 'linestyle', ':'); 
+
+%% .............................................................................Add x-ticks
+
+xticks(BlockOnsets); 
+
+%% .............................................................................Add legend
+
 legend({'observed' [M0Label ' fit'] [M1Label ' fit']}, ...
     'Location','northeast', 'NumColumns',3);
 

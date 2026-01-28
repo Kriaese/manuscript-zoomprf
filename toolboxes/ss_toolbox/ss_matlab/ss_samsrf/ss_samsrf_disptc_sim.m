@@ -1,4 +1,4 @@
-function LegendLabels = ss_samsrf_disptc_sim(Srf, Model, IdxVtx, SophFeatures, Units)
+function LegendLabels = ss_samsrf_disptc_sim(Srf, Model, IdxVtx, SophFeatures, Units, BlockOnsets)
 %
 % Plots noise-free simulated time series for a 2D Gaussian pRF model.
 %
@@ -16,13 +16,15 @@ function LegendLabels = ss_samsrf_disptc_sim(Srf, Model, IdxVtx, SophFeatures, U
 %                  --> Note that for an array of plots, it might be desirable to
 %                  drop individual legends and a global legend.
 % Units          - Units of pRF parameters (x0, y0, sigma) [char]
+% BlockOnsets    - Contains the onsets of rest or stimualtion blocks in the pRF 
+%                 experiment [double]
 % ------------------------------------------------------------------------------
 % Outputs
 % ------------------------------------------------------------------------------
 % -/-
 % ------------------------------------------------------------------------------
 % 07/09/2023: Generated (SS)
-% 29/01/2025: Last modified (SS)
+% 12/01/2026: Last modified (SS)
 
 %% .............................................................................Some defaults
 
@@ -74,13 +76,9 @@ CMap = ss_crameri_cmap('batlow', 0);
 IdxCMap = 1:round(size(CMap,1)/size(IdxVtx,2)):size(CMap,1);
 CMap = CMap(IdxCMap, :);
 
-%% .............................................................................Get TR
-
-TR = Model.TR;
-
 %% .............................................................................Plot simulated time course
 
-plot((1:size(SimDataCleanZScored,1))*TR*Model.Downsample_Predictions, ...
+plot((1:size(SimDataCleanZScored,1))*Model.Downsample_Predictions, ...
     SimDataCleanZScored, 'linewidth', 2);
 hold on
 
@@ -89,11 +87,22 @@ hold on
 Axes = gca;
 Axes.ColorOrder = CMap;
 
-%% .............................................................................Add basic plot features
+%% .............................................................................Add axis limits
 
-xlim([1 size(SimDataCleanZScored,1)]*TR);
-grid on
-line(xlim, [0 0], 'color', [1 1 1]/2, 'linewidth', 2);
+xlim([1 size(SimDataCleanZScored,1)]);
+% grid on
+
+%% .............................................................................Add 0 line 
+
+line(xlim, [0 0], 'color', [0 0 0], 'linewidth', 1, 'linestyle', ':');
+
+%% .............................................................................Add block onsets 
+
+xline(BlockOnsets, 'color', [0 0 0], 'lineWidth', 1, 'linestyle', ':'); 
+
+%% .............................................................................Add x-ticks
+
+xticks(BlockOnsets); 
 
 %% .............................................................................Add more sophisticated features
 
@@ -105,7 +114,7 @@ if SophFeatures
     % set(gcf, 'Units', 'normalized');
     % set(gcf, 'Position', [.1 .1 .8 .4]);
     % set(gca, 'fontsize', 12);
-    xlabel('time (s)');
+    xlabel('volumes');
     ylabel('response (z)');
 
 end

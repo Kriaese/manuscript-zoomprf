@@ -20,7 +20,7 @@ function ss_zoomprf_main_sim_dispgrid(Srf, AptXY, XLabel, YLabel, SearchSpace)
 % -/-
 % ------------------------------------------------------------------------------
 % 10/11/2023: Generated (SS)
-% 31/01/2025: Last modified (SS)
+% 20/01/2026: Last modified (SS)
 % ------------------------------------------------------------------------------
 % Note: Function currently assumes that it deals with x0 and y0 values, that
 % fitting has been performed without adding noise to the simulated data, and 
@@ -52,7 +52,7 @@ if isempty(SearchSpace)
 
     %% .........................................................................Color for ground truth 
 
-    ColorGroundTruth = [1 0 0];  
+    ColorGroundTruth = [220 20 60]./255;  
 
     %% .........................................................................Draw search space 
 
@@ -75,11 +75,11 @@ else
 
     %% .........................................................................Color for data 
     
-    ColorData = [0 0 0]; 
+    ColorData = [0.5 0.5 0.5]; 
 
     %% .........................................................................Color for ground truth 
 
-    ColorGroundTruth = [0 0 0];  
+    ColorGroundTruth = [220 20 60]./255;  
 
 end
 
@@ -99,7 +99,7 @@ scatter(Data(1,:), Data(2,:),  30, ColorData, 'o'); hold on;
 
 %% .............................................................................Draw ground truth
 
-scatter(GroundTruth(1,:), GroundTruth(2,:), 30, ColorGroundTruth,  'x', 'LineWidth', 1); hold on;
+scatter(GroundTruth(1,:), GroundTruth(2,:), 10, ColorGroundTruth,  'x', 'LineWidth', 1); hold on;
 
 %% .............................................................................Draw shift (if there is only 4 input arguments)
 

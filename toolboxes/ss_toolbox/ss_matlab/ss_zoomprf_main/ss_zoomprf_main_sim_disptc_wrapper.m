@@ -4,7 +4,7 @@ function ss_zoomprf_main_sim_disptc_wrapper(Subjects, Fld, Files, Para)
 %
 % ------------------------------------------------------------------------------
 % 07/09/2023: Generated (SS)
-% 04/02/2025: Last modified (SS)
+% 12/01/2026: Last modified (SS)
 
 %% .............................................................................Get t0
 
@@ -55,7 +55,7 @@ for i_sess = 1:size(Subjects.Sessions,2)
             %% .................................................................Display simulated time courses
 
             nexttile
-            ss_samsrf_disptc_sim(SimData.Srf, SimData.SimModel, Para.VtxIdx, Para.SophFeatures, Para.Units);
+            ss_samsrf_disptc_sim(SimData.Srf, SimData.SimModel, Para.VtxIdx, Para.SophFeatures, Para.Units, Para.BlockOnsets);
 
             %% .................................................................Add axis limits
 

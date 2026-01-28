@@ -4,7 +4,7 @@ function ss_zoomprf_main_disptc_obsvsfit_wrapper(Subjects, Fld, Files, Para)
 %
 % ------------------------------------------------------------------------------
 % 18/08/2023: Generated (SS)
-% 04/02/2025: Last modified (SS)
+% 23/11/2025: Last modified (SS)
 
 %% .............................................................................Get t0
 
@@ -39,6 +39,7 @@ for i_subj=1:size(Subjects.ID,2)
             for i_hemi = 1:size(Para.Hemis,2)
 
                 CurrHemi = Para.Hemis{1, i_hemi};
+                CurrVtxIdxHemi   = Subjects.VtxIdx{1, i_hemi};
 
                 %% .............................................................Get data
 
@@ -52,13 +53,13 @@ for i_subj=1:size(Subjects.ID,2)
                 %% .............................................................Initialize figure window and tiled layout
 
                 figure
-                TiledLayoutHandle = tiledlayout(size(Subjects.VtxIdx,2), 1);
+                TiledLayoutHandle = tiledlayout(size(CurrVtxIdxHemi,2), 1);
 
                 %% .............................................................Loop through vertex indices
 
-                for i_vtxidx=1:size(Subjects.VtxIdx,2)
+                for i_vtxidxhemi=1:size(CurrVtxIdxHemi,2)
 
-                    CurrVtxIdx = Subjects.VtxIdx(i_subj, i_vtxidx);
+                    CurrVtxIdx = CurrVtxIdxHemi(i_subj, i_vtxidxhemi);
 
                     %% .........................................................Display observed and fitted time courses
 
@@ -66,15 +67,14 @@ for i_subj=1:size(Subjects.ID,2)
 
                     ss_samsrf_disptc_obsvsfit(DataM0, DataM1, CurrVtxIdx,...
                         Para.ModelType{1}, Para.ModelType{2}, Para.ValuesTitle{1}, ...
-                        Para.ValuesTitle{2}, Para.Units);
+                        Para.ValuesTitle{2}, Para.Units, Para.SophFeatures, Para.BlockOnsets);
 
                     %% .........................................................Add plot features
 
                     AxisHandle = gca;
                     AxisHandle.YLim = Para.YLim;
-                    AxisHandle.FontSize = 13; 
+                    AxisHandle.FontSize = 13;
                     AxisHandle.FontName = 'Helvetica';
-           
 
                 end
 

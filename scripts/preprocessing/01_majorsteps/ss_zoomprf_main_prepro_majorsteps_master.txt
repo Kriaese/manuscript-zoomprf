@@ -5,11 +5,11 @@
 %
 % ------------------------------------------------------------------------------
 % 15/08/2024: Generated (SS)
-% 16/05/2025: Last modified (SS)
+% 18/11/2025: Last modified (SS)
 
 
 %% -----------------------------------------------------------------------------
-% 01 - run major steps (in terminal)
+% Run major steps (in terminal)
 % ------------------------------------------------------------------------------
 
 pRF_pipeline_nonlinear_BBR_01.sh |& tee -a /home/sstoll/projects/zoomprf_main/logs/log_pRF_pipeline_nonlinear_BBR_01.txt

@@ -1,12 +1,11 @@
 %% -----------------------------------------------------------------------------
-% 14 - zoomprf main - display cross-validated R2 for on-off model with masked 
-%      anatomy
+% 48 - zoomprf main - display time courses for observed vs fit data
 % ------------------------------------------------------------------------------
 %
 %
 % ------------------------------------------------------------------------------
-% 26/09/2022: Generated (SS)
-% 18/01/2026: Last modified (SS)
+% 18/08/2023: Generated (SS)
+% 23/11/2025: Last modified (SS)
 % ------------------------------------------------------------------------------
 
 %% .............................................................................Tidy up
@@ -16,19 +15,19 @@ close all
 
 %% .............................................................................Subjects
 
-
 Subjects.ID            = { ...
     'sub-01' ...
     'sub-02' ...
     'sub-03'};
 
-Subjects.Sessions      = {'ses-02+03+04-eve' 'ses-02+03+04-odd'};
+Subjects.Sessions      = {'ses-02+03+04' 'ses-02+03+04-eve' 'ses-02+03+04-odd'};
 Subjects.Kernel        = {'FWHM-0' 'FWHM-1'};
 
-Subjects.SessionsSamSrfLabel      = {'ses-01' 'ses-01'};
-%%% Note: Needs to be length of Subjects.Sessions
-Subjects.KernelSamSrfLabel        = {'FWHM-1' 'FWHM-1'};
-%%% Note: Needs to be length of Subjects.Kernel
+Subjects.VtxIdx        = {[...
+    60220 61173; ...
+    58484 133561; ...
+    56964 55163]};
+%%% Note: Pick one or several vertices for each subject.
 
 %% .............................................................................Folders
 
@@ -41,17 +40,9 @@ Fld.DataRoot       = Paths.DataRoot;
 
 Fld.SamSrfRoot     = fullfile(Fld.DataRoot, 'derivatives', 'SamSrf');
 Fld.ResultsRoot    = fullfile(Fld.DataRoot, 'derivatives', 'results');
-Fld.FSRoot         = fullfile(Fld.DataRoot, 'derivatives', 'FreeSurfer');
 
 % Toolboxes
-Fld.Toolboxes      = {'ss_toolbox' 'samsrf_v9.51'};
-
-% FreeSurfer
-Fld.FSLabel        = 'label';
-Fld.FSAtlas        = 'atlas';
-
-% SamSrf
-Fld.SamSrfLabel    = 'ROIs*';
+Fld.Toolboxes      = {'ss_toolbox' 'samsrf_v9.51' 'scientificcolourmaps8'};
 
 %% .............................................................................Add toolboxes
 
@@ -66,46 +57,33 @@ end
 
 %% .............................................................................Parameters
 
-Para.Hemis               = {'rh'};
-Para.HemisSamsrfLabels   = {'rh'};
+Para.Hemis         = {'rh'};
+Para.ModelType     = {'onoff' '2dg-fix'};
+%%% Note: 1st: Null model
+%%%       2nd: Alternative model
 
-Para.Transparency        = 0;
-%%% 0 = turn off transparency
-Para.MapType             = {'cR^2'};
-Para.PathColors          = {[1 1 1]};
-Para.Mesh                = 'inflated';
-Para.EccenRange          = [0 Inf];
-Para.NR2ThreshGen        = 0;
-%%% Note that "Gen" refers to general.
-Para.CR2Thresh           = [0 0.8];
+Para.Ext           = 'png';
+Para.Res           = 300;
+Para.YLim          = [-1 1.5];
+Para.ValuesTitle   = {{'cR^2'} {'x0' 'y0' 'cR^2' 'diff-cR^2'}};
 
-Para.Threshold           = {...
-    [Para.NR2ThreshGen Para.CR2Thresh Para.EccenRange Para.Transparency]};
+Para.Units         = 'mm';
 
-Para.Res                   = 300;
-Para.CamView               = {[94 15 1.4] [-94 15 1.4]};
-Para.Ext                   = 'png';
+Para.XLabel        = 'volumes';
+Para.YLabel        = 'response (z)';
 
-Para.RestrictMapsToLabels      = false;
+Para.BlockOnsets   = 1:16:144; 
+%%% Note: This is in volumes. 
 
-Para.BlurryBorderSteps     = 1:7;
-
-Para.InactivatenR2Cleaning = true;
-
-Para.Blanco              = false;
-Para.PathWidth           = [1 1];
+Para.SophFeatures  = false; 
 
 %% .............................................................................Files
 
-Files.Data               = '*mgh2srf_mean_onoff_aperture-pins_vec_spmcan_CrsFit.mat';
-Files.FSLabel            = [];
-Files.SamSrfLabel        = {'D2a'};
-Files.FSAtlas            = [];
-
-Files.AnatLabel          = {'D2a' 'samsrf'};
-%%% Note: 'fsatlas': refers to the derived FreeSurfer atlas+corresponding labels; 
-%%% 'samsrf' refers to manual labels defined using SamSrf; and  
-%%% 'fslabels' refers to the standard free surfer labels. 
+Files.Prf          = {...
+    ['*mgh2srf_mean_' Para.ModelType{1} '_aperture-pins_vec_spmcan_CrsFit.mat'] ...
+    ['*mgh2srf_mean_' Para.ModelType{2} '_aperture-pins_vec_spmcan_CrsFit.mat']};
+%%% Note: 1st: Null model
+%         2nd: Alternative model
 
 %% .............................................................................Switches
 
@@ -114,10 +92,10 @@ Switches.SaveAllVars = 0;
 try
 
     %% -------------------------------------------------------------------------
-    % (1) Display cross-validated R2 map for onoff model with masked anatomy
+    % (1) Display time courses for observed vs fit data
     % --------------------------------------------------------------------------
 
-    ss_zoomprf_main_dispmaps_wrapper(Subjects, Fld, Files, Para)
+    ss_zoomprf_main_disptc_obsvsfit_wrapper(Subjects, Fld, Files, Para)
 
     %% -------------------------------------------------------------------------
     % (2) Save all variables

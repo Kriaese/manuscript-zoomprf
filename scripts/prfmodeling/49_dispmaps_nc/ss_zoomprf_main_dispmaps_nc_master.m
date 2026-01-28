@@ -1,12 +1,11 @@
 %% -----------------------------------------------------------------------------
-% 14 - zoomprf main - display cross-validated R2 for on-off model with masked 
-%      anatomy
+% 49 - zoomprf main - display noise ceiling maps
 % ------------------------------------------------------------------------------
 %
 %
 % ------------------------------------------------------------------------------
-% 26/09/2022: Generated (SS)
-% 18/01/2026: Last modified (SS)
+% 28/11/2025: Generated (SS)
+% 28/11/2025: Last modified (SS)
 % ------------------------------------------------------------------------------
 
 %% .............................................................................Tidy up
@@ -16,16 +15,17 @@ close all
 
 %% .............................................................................Subjects
 
-
 Subjects.ID            = { ...
     'sub-01' ...
     'sub-02' ...
     'sub-03'};
 
-Subjects.Sessions      = {'ses-02+03+04-eve' 'ses-02+03+04-odd'};
+Subjects.Sessions      = {'ses-01' 'ses-02' 'ses-03' 'ses-04' ...
+    'ses-02+03+04' 'ses-02+03+04-odd' 'ses-02+03+04-eve'};
 Subjects.Kernel        = {'FWHM-0' 'FWHM-1'};
 
-Subjects.SessionsSamSrfLabel      = {'ses-01' 'ses-01'};
+Subjects.SessionsSamSrfLabel      = {'ses-01' 'ses-01' 'ses-01' 'ses-01' ...
+    'ses-01' 'ses-01' 'ses-01'};
 %%% Note: Needs to be length of Subjects.Sessions
 Subjects.KernelSamSrfLabel        = {'FWHM-1' 'FWHM-1'};
 %%% Note: Needs to be length of Subjects.Kernel
@@ -66,43 +66,41 @@ end
 
 %% .............................................................................Parameters
 
-Para.Hemis               = {'rh'};
+Para.Hemis               = {'rh' 'lh'};
 Para.HemisSamsrfLabels   = {'rh'};
 
-Para.Transparency        = 0;
-%%% 0 = turn off transparency
-Para.MapType             = {'cR^2'};
+Para.Transparency        = 0; 
+%%% Note that 0 = turn off transparency
+Para.MapType             = {'Noise Ceiling'};
 Para.PathColors          = {[1 1 1]};
 Para.Mesh                = 'inflated';
-Para.EccenRange          = [0 Inf];
-Para.NR2ThreshGen        = 0;
+Para.EccenRange          = [NaN NaN];
+Para.NR2ThreshGen        =  0;
 %%% Note that "Gen" refers to general.
-Para.CR2Thresh           = [0 0.8];
+Para.TThresh             = [0 1]; % [0 5];
+Para.Threshold           = {[Para.NR2ThreshGen Para.TThresh Para.EccenRange Para.Transparency]};
 
-Para.Threshold           = {...
-    [Para.NR2ThreshGen Para.CR2Thresh Para.EccenRange Para.Transparency]};
+Para.Res                 = 300;
+Para.CamView             = {[94 15 1.4] [-94 15 1.4]};
+Para.Ext                 = 'png';
 
-Para.Res                   = 300;
-Para.CamView               = {[94 15 1.4] [-94 15 1.4]};
-Para.Ext                   = 'png';
+Para.RestrictMapsToLabels    = false;
 
-Para.RestrictMapsToLabels      = false;
+Para.BlurryBorderSteps       = 1:7;
 
-Para.BlurryBorderSteps     = 1:7;
+Para.InactivatenR2Cleaning   = true;
 
-Para.InactivatenR2Cleaning = true;
-
-Para.Blanco              = false;
-Para.PathWidth           = [1 1];
+Para.Blanco                  = false;
+Para.PathWidth               = [3 1];
 
 %% .............................................................................Files
 
-Files.Data               = '*mgh2srf_mean_onoff_aperture-pins_vec_spmcan_CrsFit.mat';
+Files.Data               = '*mgh2srf_mean.mat';
 Files.FSLabel            = [];
-Files.SamSrfLabel        = {'D2a'};
-Files.FSAtlas            = [];
+Files.SamSrfLabel        = []; 
+Files.FSAtlas            = {'.postcentral'}; 
 
-Files.AnatLabel          = {'D2a' 'samsrf'};
+Files.AnatLabel          = [];
 %%% Note: 'fsatlas': refers to the derived FreeSurfer atlas+corresponding labels; 
 %%% 'samsrf' refers to manual labels defined using SamSrf; and  
 %%% 'fslabels' refers to the standard free surfer labels. 
@@ -114,11 +112,11 @@ Switches.SaveAllVars = 0;
 try
 
     %% -------------------------------------------------------------------------
-    % (1) Display cross-validated R2 map for onoff model with masked anatomy
+    % (1) Display noise ceiling maps
     % --------------------------------------------------------------------------
 
     ss_zoomprf_main_dispmaps_wrapper(Subjects, Fld, Files, Para)
-
+    
     %% -------------------------------------------------------------------------
     % (2) Save all variables
     % --------------------------------------------------------------------------

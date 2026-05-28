@@ -8,7 +8,7 @@ Susanne Stoll, Falk Luesebrink, D. Samuel Schwarzkopf, Hendrik Mattern, Peng Liu
 
 This repository contains 
 
-- custom code associated with our manuscript, which is available as a [preprint](https://doi.org/10.1101/2025.05.24.655840).
+- custom code associated with our manuscript, which is available as a [preprint](https://doi.org/10.1101/2025.05.24.655840) and [journal article](https://doi.org/10.1162/IMAG.a.1210).
 
 Please report any issues by sending an email to stollsus@gmail.com. Thank you!
 
